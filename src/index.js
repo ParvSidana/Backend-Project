@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-
+import { app } from "./app.js";
 import connectDB from "./db/index.js";
 
 dotenv.config({
@@ -18,5 +18,5 @@ connectDB()
     });
   })
   .catch((err) => {
-    console.log("Error connecting Database", err);
+    console.log("Errorin index connecting Database", err);
   });
