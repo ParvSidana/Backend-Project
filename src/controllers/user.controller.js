@@ -16,6 +16,7 @@ const registerUser = asyncHandler(async (req, res) => {
   //check for user creation
   //return response
 
+  // console.log("body-", req.body);
   const { username, email, password, fullname } = req.body; //avatar and coverImage will be available using multer through 'req.files'
   // console.log(email);
 
@@ -25,7 +26,7 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(401, `${field} is required`);
   }
 
-  const existedUser = User.findOne({
+  const existedUser = await User.findOne({
     $or: [{ email }, { username }],
   });
 
@@ -33,10 +34,17 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(409, "User already exists");
   }
 
-  console.log(req.files);
+  // console.log("req.files", req.files);
 
   const avatarLocalFilePath = req.files?.avatar[0]?.path;
-  const coverImageLocalFilePath = req.files?.coverImage[0]?.path;
+  let coverImageLocalFilePath;
+
+  if (
+    req.files &&
+    Array.isArray(req.files.coverImage) &&
+    req.files.coverImage.length > 0
+  )
+    coverImageLocalFilePath = req.files.coverImage.path;
 
   if (!avatarLocalFilePath) {
     throw new ApiError(400, "Avatar file is required");
